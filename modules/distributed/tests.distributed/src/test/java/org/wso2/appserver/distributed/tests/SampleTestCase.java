@@ -1,13 +1,25 @@
+/*
+*Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*
+*WSO2 Inc. licenses this file to you under the Apache License,
+*Version 2.0 (the "License"); you may not use this file except
+*in compliance with the License.
+*You may obtain a copy of the License at
+*
+*http://www.apache.org/licenses/LICENSE-2.0
+*
+*Unless required by applicable law or agreed to in writing,
+*software distributed under the License is distributed on an
+*"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+*KIND, either express or implied.  See the License for the
+*specific language governing permissions and limitations
+*under the License.
+*/
+
 package org.wso2.appserver.distributed.tests;
 
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.wink.client.ClientResponse;
 import org.json.JSONObject;
 import org.testng.annotations.AfterClass;
@@ -17,26 +29,10 @@ import org.wso2.appserver.distributed.admin.clients.AARServiceUploaderClient;
 import org.wso2.appserver.distributed.admin.clients.ServiceDeploymentUtil;
 import org.wso2.appserver.distributed.common.utils.DockerController;
 import org.wso2.carbon.authenticator.stub.AuthenticationAdminStub;
-import org.wso2.carbon.automation.engine.context.AutomationContext;
-import org.wso2.carbon.automation.engine.context.ContextXpathConstants;
-import org.wso2.carbon.automation.engine.context.beans.User;
 import org.wso2.carbon.automation.engine.frameworkutils.FrameworkPathUtil;
-import org.wso2.carbon.automation.test.utils.axis2client.AxisServiceClient;
-import org.wso2.carbon.automation.test.utils.axis2client.AxisServiceClientUtils;
 import org.wso2.carbon.automation.test.utils.dbutils.MySqlDatabaseManager;
-import org.wso2.carbon.automation.test.utils.http.client.HttpResponse;
-import org.wso2.carbon.automation.test.utils.http.client.HttpURLConnectionClient;
-import org.wso2.carbon.automation.test.utils.http.client.HttpsResponse;
-import org.wso2.carbon.automation.test.utils.http.client.HttpsURLConnectionClient;
 import org.wso2.carbon.integration.common.admin.client.AuthenticatorClient;
-import org.wso2.carbon.integration.common.admin.client.SecurityAdminServiceClient;
-import org.wso2.carbon.integration.common.utils.LoginLogoutClient;
 
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSocket;
-import javax.xml.namespace.QName;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -87,46 +83,34 @@ import static org.testng.Assert.assertNotNull;
  * 8. Build Wso2 base
  * 9. Building wso2as container
  * 10.Running wso2as container ( access mgt console : https://172.17.0.3:9443/carbon/admin/login.jsp)
- *  correct way : https://localhost:32004/carbon/admin/login.jsp
+ * correct way : https://localhost:32004/carbon/admin/login.jsp
  */
 
 
 @Test(groups = "wso2.com.dimuthu.tests")
 public class SampleTestCase {
 
-    private AutomationContext automationContext;
     private DockerController dockerController;
     private String resourceLocation;
     private String mysqlContainerIP;
     private String asContainerIP;
     private String asContainerPort;
-    private String esbContainerIP;
-    private String esbContainerPort;
-
-    protected AutomationContext asServer;
     protected String sessionCookie;
     protected String backendURL;
-    protected String webAppURL;
-    protected SecurityAdminServiceClient securityAdminServiceClient;
-    protected LoginLogoutClient loginLogoutClient;
-    protected User userInfo;
-    private AuthenticationAdminStub authenticationAdminStub;
 
     private static final Log log = LogFactory.getLog(SampleTestCase.class);
 
     @BeforeClass(alwaysRun = true)
     public void init() throws Exception {
 
-        //  init(TestUserMode.SUPER_TENANT_ADMIN);
-
-        automationContext = new AutomationContext("AS", "appServerInstance0001", ContextXpathConstants.SUPER_TENANT,
-                ContextXpathConstants.SUPER_ADMIN);
+   /*     AutomationContext automationContext = new AutomationContext("AS", "appServerInstance0001", ContextXpathConstants.SUPER_TENANT,
+                ContextXpathConstants.SUPER_ADMIN);*/
 
         dockerController = new DockerController();
-        HttpsResponse response =
+       /* HttpsResponse response =
                 HttpsURLConnectionClient.getRequest("https://google.com",
                         null
-                );
+                );*/
 
         resourceLocation = FrameworkPathUtil.getSystemResourceLocation();
 
@@ -153,7 +137,7 @@ public class SampleTestCase {
 
 
         ClientResponse responseInspectContainerMySql = dockerController.inspectContainer(jsonObjectMySql);
-        Object jsonInspectObjMySql = new JSONObject(responseInspectContainerMySql.getEntity(String.class)).get("NetworkSettings");
+        Object jsonInspectObjMySql = new JSONObject(responseInspectContainerMySql).get("NetworkSettings");
         mysqlContainerIP = ((JSONObject) jsonInspectObjMySql).get("IPAddress").toString();
 
         assertNotNull(mysqlContainerIP, "ID should not be null");
@@ -186,7 +170,7 @@ public class SampleTestCase {
                 resourceLocation + File.separator + "json" + File.separator + "wso2asstartcontainer.json");
 
         ClientResponse responseInspectContainerAS = dockerController.inspectContainer(jsonObjectAS);
-        Object jsonInspectObjAS = new JSONObject(responseInspectContainerAS.getEntity(String.class)).get("NetworkSettings");
+        Object jsonInspectObjAS = new JSONObject(responseInspectContainerAS).get("NetworkSettings");
         asContainerIP = ((JSONObject) jsonInspectObjAS).get("IPAddress").toString();
         asContainerPort = ((JSONObject) jsonInspectObjAS).get("Ports").toString();
     }
@@ -223,8 +207,8 @@ public class SampleTestCase {
                         null
                 );*/
 
-        authenticationAdminStub = new AuthenticationAdminStub("https://localhost:32004/services/AuthenticationAdmin");
-        authenticationAdminStub.login("admin","admin","localhost");
+        AuthenticationAdminStub authenticationAdminStub = new AuthenticationAdminStub("https://localhost:32004/services/AuthenticationAdmin");
+        authenticationAdminStub.login("admin", "admin", "localhost");
 
         //https://localhost:9543/services/AuthenticationAdmin
 
@@ -267,10 +251,10 @@ public class SampleTestCase {
         );
 
         ClientResponse responseInspectContainerESB = dockerController.inspectContainer(jsonObjectESB);
-        Object jsonInspectObjESB = new JSONObject(responseInspectContainerESB.getEntity(String.class)).
+        Object jsonInspectObjESB = new JSONObject(responseInspectContainerESB).
                 get("NetworkSettings");
-        esbContainerIP = ((JSONObject) jsonInspectObjESB).get("IPAddress").toString();
-        esbContainerPort = ((JSONObject) jsonInspectObjESB).get("Ports").toString();
+        String esbContainerIP = ((JSONObject) jsonInspectObjESB).get("IPAddress").toString();
+        String esbContainerPort = ((JSONObject) jsonInspectObjESB).get("Ports").toString();
     }
 
 
@@ -331,9 +315,7 @@ public class SampleTestCase {
     }
 
 
-
-
-    private OMElement createPayload() throws Exception {
+  /*  private OMElement createPayload() throws Exception {
         String request = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:aut=\"http://authentication.services.core.carbon.wso2.org\">\n" +
                 "   <soapenv:Header/>\n" +
                 "   <soapenv:Body>\n" +
@@ -348,7 +330,7 @@ public class SampleTestCase {
                 "   </soapenv:Body>\n" +
                 "</soapenv:Envelope>\n";
         return new StAXOMBuilder(new ByteArrayInputStream(request.getBytes())).getDocumentElement();
-    }
+    }*/
 
     @AfterClass(alwaysRun = true)
     public void tearDown() throws IOException {

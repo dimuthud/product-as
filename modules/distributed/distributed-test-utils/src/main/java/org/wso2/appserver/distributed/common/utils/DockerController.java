@@ -1,3 +1,21 @@
+/*
+*Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*
+*WSO2 Inc. licenses this file to you under the Apache License,
+*Version 2.0 (the "License"); you may not use this file except
+*in compliance with the License.
+*You may obtain a copy of the License at
+*
+*http://www.apache.org/licenses/LICENSE-2.0
+*
+*Unless required by applicable law or agreed to in writing,
+*software distributed under the License is distributed on an
+*"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+*KIND, either express or implied.  See the License for the
+*specific language governing permissions and limitations
+*under the License.
+*/
+
 package org.wso2.appserver.distributed.common.utils;
 
 import io.fabric8.docker.client.Config;
@@ -17,21 +35,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.wso2.carbon.automation.test.utils.dbutils.MySqlDatabaseManager;
 import org.wso2.carbon.automation.test.utils.wink.client.GenericRestClient;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-
-/*import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;*/
 
 /**
  * Before Running This Code Please be Ensure The Following
@@ -77,29 +90,20 @@ import static org.testng.Assert.assertNotNull;*/
 
 public class DockerController {
 
-    private static CloneCommand cloneCommand;
-    private static Git local;
-    private static File dirLocation;
-    private static String gitUrl;
-    private static String dirPath;
-    private static String productPackLocation;
-    private static String connectorJarLocation;
-    private static String dockerImageName;
-    private static String dockerContainerName;
-    private static String mysqlContainerIP;
     private static JSONParser parser = new JSONParser();
     private static Map<String, String> queryParamMap = new HashMap<String, String>();
-    private static String type = "restservice";
     private static Map<String, String> headerMap = new HashMap<String, String>();
-   /* private static String scriptPath = "/home/dimuthu/Desktop/Products/C5Automation/SampleProject/mavn2/src/main/resources/scripts/createdatabases.sql";
-    private static String scriptPath2 = "/home/dimuthu/Desktop/Products/C5Automation/SampleProject/mavn2/src/main/resources/scripts/mysql.sql";*/
-
+    private GenericRestClient genericRestClient;
 
     public DockerController(){
-
+        genericRestClient = new GenericRestClient();
     }
 
-
+    /**
+     * @param dockerURL - docker daemon url
+     * @param dockerFileLocation - docker image file location
+     * @param repositoryName - repo name
+     */
     public void buildDockerFile(String dockerURL, String dockerFileLocation, String repositoryName) {
 
         // Building docker image
@@ -128,14 +132,22 @@ public class DockerController {
 
     }
 
+    /**
+     * Running of docker image
+     * @param createContainerFilePath - file location contains create container request information
+     * @param startContainer - file location contains start container request information
+     * @return Json object of container info
+     * @throws IOException
+     * @throws ParseException
+     * @throws JSONException
+     */
     public JSONObject runDockerImage(String createContainerFilePath, String startContainer) throws IOException,
             ParseException, JSONException {
-
-        GenericRestClient genericRestClient = new GenericRestClient();
 
         // create container
         Object createObject = parser.parse(new FileReader(createContainerFilePath));
 
+        String type = "restservice";
         queryParamMap.put("type", type);
 
         ClientResponse responseCreateContainer =
@@ -158,24 +170,16 @@ public class DockerController {
 
         assertNotNull(responseStartContainer);
 
-
-       /* // inspect container
-        ClientResponse responseInspectContainer =
-                genericRestClient.geneticRestRequestGet("http://localhost:2375/containers/" +
-                        jsonObj.get("Id").toString() + "/json", queryParamMap, headerMap, null);
-
-        Object jsonInspectObj = new JSONObject(responseInspectContainer.getEntity(String.class)).get("NetworkSettings");
-        mysqlContainerIP = ((JSONObject) jsonInspectObj).get("IPAddress").toString();
-
-        assertNotNull(mysqlContainerIP, "ID should not be null");*/
-
         return jsonObj;
     }
 
+    /**
+     * Returns docker container related information
+     * @param jsonObj - json object contains params for starting container
+     * @return container information
+     * @throws JSONException
+     */
     public ClientResponse inspectContainer(JSONObject jsonObj) throws JSONException {
-
-        GenericRestClient genericRestClient = new GenericRestClient();
-
         // inspect container
         ClientResponse responseInspectContainer =
                 genericRestClient.geneticRestRequestGet("http://localhost:2375/containers/" + jsonObj.get("Id").toString() + "/json",
@@ -183,15 +187,18 @@ public class DockerController {
 
         return responseInspectContainer;
 
-      /*  Object jsonInspectObj = new JSONObject(responseInspectContainer.getEntity(String.class)).get("NetworkSettings");
-        mysqlContainerIP = ((JSONObject) jsonInspectObj).get("IPAddress").toString();
-
-        assertNotNull(mysqlContainerIP, "ID should not be null");*/
     }
 
+    /**
+     * This methods clones specified git repo
+     * @param gitURL - URL of the git repository
+     * @param dirPath - Destination directory location
+     * @throws IOException
+     * @throws GitAPIException
+     */
     public void gitRepoClone(String gitURL ,String dirPath) throws IOException, GitAPIException {
-        cloneCommand = Git.cloneRepository();
-        dirLocation = new File(dirPath);
+        CloneCommand cloneCommand = Git.cloneRepository();
+        File dirLocation = new File(dirPath);
 
         if (dirLocation.exists()) {
             FileUtils.forceDelete(dirLocation);
@@ -200,18 +207,28 @@ public class DockerController {
         cloneCommand.setURI(gitURL);
         cloneCommand.setDirectory(dirLocation);
 
-        local = cloneCommand.call();
+        Git local = cloneCommand.call();
 
         assertEquals(local.getRepository().getDirectory(), new File(dirLocation, ".git"));
         assertEquals(local.getRepository().getWorkTree(), dirLocation);
     }
 
+    /**
+     * File operation handler utility
+     * @param sourceLocation - Source directory location
+     * @param destinationLocation - Destination directory location
+     * @throws IOException
+     */
     public static void copyFiles(String sourceLocation, String destinationLocation) throws IOException {
         FileUtils.copyFile(new File(sourceLocation), new File(destinationLocation));
     }
 
+    /**
+     * File remover handler utility
+     * @param sourceLocation -  Source directory location
+     * @throws IOException
+     */
     public static void removeFiles(String sourceLocation) throws IOException {
         FileUtils.forceDelete(new File(sourceLocation));
     }
-
 }
