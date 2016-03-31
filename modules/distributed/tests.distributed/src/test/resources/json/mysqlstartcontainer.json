@@ -1,0 +1,32 @@
+{
+         "Hostname":"127.0.0.1",
+         "Domainname": "",
+         "User":"root",
+         "Memory":0,
+         "MemorySwap":0,
+         "CpuShares": 512,
+         "Cpuset": "0,1",
+         "AttachStdin":false,
+         "AttachStdout":true,
+         "AttachStderr":true,
+         "PortSpecs":null,
+         "Tty":false,
+         "OpenStdin":false,
+         "StdinOnce":false,
+         "Env": [
+                 "MYSQL_ROOT_PASSWORD=ROOT"
+         ],
+         "Cmd":[
+                 "date"
+         ],
+  "Image":"mysql:5.7.11",
+         "Volumes":{
+                 "/tmp": {}
+         },
+         "WorkingDir":"",
+         "NetworkDisabled": false,
+         "ExposedPorts":{
+                 "3306/tcp": {}
+         },
+         "RestartPolicy": { "Name": "always" }
+    }

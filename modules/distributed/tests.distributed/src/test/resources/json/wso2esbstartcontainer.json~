@@ -1,0 +1,31 @@
+{
+    "Hostname":"127.0.0.1",
+    "Domainname": "",
+    "User":"root",
+    "Memory":0,
+    "MemorySwap":0,
+    "CpuShares": 512,
+    "Cpuset": "0,1",
+    "AttachStdin":false,
+    "AttachStdout":true,
+    "AttachStderr":true,
+    "PortSpecs":null,
+    "Tty":false,
+    "OpenStdin":false,
+    "StdinOnce":false,
+    "Env": [
+    ],
+    "Cmd":[
+        "/mnt/x.x.x.x/wso2esb-4.9.0/bin/start.sh"
+    ],
+    "Image":"wso2/esb-4.9.0:1.0.0",
+    "Volumes":{
+        "/tmp": {}
+    },
+    "WorkingDir":"",
+    "NetworkDisabled": false,
+    "ExposedPorts":{
+        "32003:9764/tcp,32004:9444/tcp": {}
+    },
+    "RestartPolicy": { "Name": "always" }
+}

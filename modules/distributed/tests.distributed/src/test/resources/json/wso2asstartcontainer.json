@@ -1,0 +1,32 @@
+{
+    "Hostname":"127.0.0.1",
+    "Domainname": "",
+    "User":"root",
+    "Memory":0,
+    "MemorySwap":0,
+    "CpuShares": 512,
+    "Cpuset": "0,1",
+    "AttachStdin":false,
+    "AttachStdout":true,
+    "AttachStderr":true,
+    "PortSpecs":null,
+    "Tty":false,
+    "OpenStdin":false,
+    "StdinOnce":false,
+    "Env": [
+    ],
+    "Cmd":[
+        "/mnt/x.x.x.x/wso2as-5.3.0/bin/start.sh"
+    ],
+    "Image":"wso2/as-5.3.0:1.0.0",
+    "Volumes":{
+        "/tmp": {}
+    },
+    "WorkingDir":"",
+    "NetworkDisabled": false,
+    "ExposedPorts":{
+        "9763/tcp,9443/tcp": {}
+    },
+    "PortBindings": { "9443/tcp": [{ "HostPort": "32004" }] , "9763/tcp": [{ "HostPort": "32003" }]},
+    "RestartPolicy": { "Name": "always" }
+}
