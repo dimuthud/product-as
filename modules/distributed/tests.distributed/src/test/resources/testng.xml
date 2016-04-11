@@ -2,26 +2,21 @@
 
 <suite name="GregTestSuite">
     <parameter name="useDefaultListeners" value="false"/>
-<!--    <listeners>
+    <listeners>
         <listener class-name="org.wso2.carbon.automation.engine.testlisteners.TestExecutionListener"/>
         <listener class-name="org.wso2.carbon.automation.engine.testlisteners.TestManagerListener"/>
         <listener class-name="org.wso2.carbon.automation.engine.testlisteners.TestReportListener"/>
         <listener class-name="org.wso2.carbon.automation.engine.testlisteners.TestSuiteListener"/>
         <listener class-name="org.wso2.carbon.automation.engine.testlisteners.TestTransformerListener"/>
-    </listeners>-->
+    </listeners>
 
     <test name="Test1" preserve-order="true" parallel="false">
-
         <packages>
             <package name="org.wso2.appserver.distributed.tests"/>
         </packages>
-
-
     </test>
 
-<!--
     <parameter name="pattern1" value="/home/dimuthu/Sale/dep01.yaml">
-
-    </parameter>-->
+    </parameter>
 
 </suite>

@@ -29,11 +29,14 @@
 
                         <configuration>
                             <!--<argLine>-Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=512m</argLine>-->
-                            <argLine>-Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=512m -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005</argLine>
+                            <argLine>-Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=512m -Xdebug -Xnoagent
+                                -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005
+                            </argLine>
                             <groups>${testcase.groups}</groups>
-                            <!--suiteXmlFiles>
+                            <suiteXmlFiles>
                                 <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
-                            </suiteXmlFiles>-->
+                                <suiteXmlFile>src/test/resources/testng-server-mgt.xml</suiteXmlFile>
+                            </suiteXmlFiles>
                             <environmentVariables>
                                 <PUPPET_HOME>
                                     /home/dimuthu/Desktop/Products/C5Automation/SampleProject/mavn/src/test/resources/temp/puppet-modules
@@ -262,10 +265,15 @@
         </dependency>
 
 
-
         <dependency>
             <groupId>org.wso2.carbon.automation</groupId>
             <artifactId>org.wso2.carbon.automation.extensions</artifactId>
+            <exclusions>
+            <exclusion>
+                <groupId>org.apache.wink</groupId>
+                <artifactId>wink-client</artifactId>
+            </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.automation</groupId>

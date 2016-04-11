@@ -12,7 +12,7 @@
   ~
   ~  Unless required by applicable law or agreed to in writing,
   ~  software distributed under the License is distributed on an
-  ~  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~  "common IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
   ~  KIND, either express or implied.  See the License for the
   ~  specific language governing permissions and limitations
   ~  under the License.
@@ -200,6 +200,12 @@
                 <class>
                     <name>org.wso2.carbon.integration.common.extensions.usermgt.UserPopulateExtension</name>
                 </class>-->
+<!--                <class>
+                <name>org.wso2.carbon.automation.extensions.servers.carbonserver.CarbonServerExtension</name>
+                </class>-->
+                <class>
+                    <name>org.wso2.carbon.automation.extensions.distributed.extensions.DistributedPlatformExtension</name>
+                </class>
             </extentionClasses>
         </platformExecutionManager>
 
@@ -207,6 +213,7 @@
         <PlatformSuiteManager>
             <extentionClasses>
                 <!--<className>org.wso2.carbon.automation.extentions.servers.wso2server.Wso2ServerExtention</className>-->
+
             </extentionClasses>
         </PlatformSuiteManager>
 
